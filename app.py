@@ -158,7 +158,7 @@ HTML_TEMPLATE = """
 </head>
 <body>
     <div class="container">
-        <h1>💀 DRK HUB 🩸</h1>
+        <h1> DRK HUB </h1>
         <div class="tagline">Underworld Boosting Engine</div>
 
         <form id="orderForm">
