@@ -4,14 +4,17 @@ import os
 
 app = Flask(__name__)
 
-# --- CONFIGURATION (Provider Details) ---
-PROVIDER_API_URL = "https://smm-provider-domain.com/api/v2"
-PROVIDER_API_KEY = "YOUR_API_KEY_HERE"
+# ==========================================
+# ⚙️ APNI REAL PROVIDER DETAILS YAHAN DALEIN
+# ==========================================
+PROVIDER_API_URL = "https://example-smm-provider.com/api/v2"  # Provider ka API URL
+PROVIDER_API_KEY = "PASTE_YOUR_API_KEY_HERE"                 # Provider se mili Secret Key
 
 SERVICE_IDS = {
-    "ff_likes": "101",
-    "craftland_subs": "102"
+    "ff_likes": "101",        # Free Fire Likes ka Service ID number
+    "craftland_subs": "102"    # Craftland Followers/Stars ka Service ID number
 }
+# ==========================================
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -28,7 +31,7 @@ HTML_TEMPLATE = """
         input, select { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid #334155; background: #0b0f19; color: #fff; box-sizing: border-box; font-size: 14px; }
         button { width: 100%; padding: 14px; margin-top: 24px; background: #f59e0b; color: #000; font-weight: bold; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; }
         button:hover { background: #d97706; }
-        #statusBox { margin-top: 20px; padding: 12px; border-radius: 8px; font-size: 13px; display: none; }
+        #statusBox { margin-top: 20px; padding: 12px; border-radius: 8px; font-size: 13px; display: none; line-height: 1.5; }
         .success { background: #064e3b; color: #6ee7b7; border: 1px solid #059669; display: block !important; }
         .error { background: #7f1d1d; color: #fca5a5; border: 1px solid #dc2626; display: block !important; }
     </style>
@@ -78,14 +81,14 @@ HTML_TEMPLATE = """
 
                 if (data.order) {
                     statusBox.className = 'success';
-                    statusBox.innerHTML = `✅ <b>Order Placed!</b><br>Order ID: ${data.order}`;
+                    statusBox.innerHTML = `✅ <b>Order Confirmed!</b><br>Order ID: ${data.order}<br>UID: ${payload.target_id}`;
                 } else {
                     statusBox.className = 'error';
                     statusBox.innerHTML = `❌ <b>Failed:</b> ${data.error || JSON.stringify(data)}`;
                 }
             } catch (err) {
                 statusBox.className = 'error';
-                statusBox.innerText = 'Network error!';
+                statusBox.innerText = 'Network error ya server issue!';
             }
         };
     </script>
@@ -106,6 +109,9 @@ def place_order():
 
     service_id = SERVICE_IDS.get(service_type)
 
+    if not service_id:
+        return jsonify({'error': 'Invalid Service Selected'}), 400
+
     payload = {
         'key': PROVIDER_API_KEY,
         'action': 'add',
@@ -115,7 +121,7 @@ def place_order():
     }
 
     try:
-        response = requests.post(PROVIDER_API_URL, data=payload, timeout=12)
+        response = requests.post(PROVIDER_API_URL, data=payload, timeout=15)
         return jsonify(response.json())
     except Exception as e:
         return jsonify({'error': str(e)}), 500
